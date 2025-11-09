@@ -9,10 +9,13 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  Image,
 } from 'react-native';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/contexts/AuthContext';
 import { router } from 'expo-router';
+import { X, Plus } from 'lucide-react-native';
+import { pickImage, uploadImage } from '@/lib/storage';
 
 const CATEGORIES = [
   'Electronics',
@@ -38,9 +41,30 @@ export default function Post() {
     'fixed'
   );
   const [location, setLocation] = useState('');
+  const [images, setImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const { user } = useAuth();
+
+  const handleAddImage = async () => {
+    try {
+      const imageUri = await pickImage();
+      if (imageUri) {
+        setUploading(true);
+        const url = await uploadImage(imageUri, postType);
+        setImages((prev) => [...prev, url]);
+      }
+    } catch (err: any) {
+      Alert.alert('Error', 'Failed to upload image');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleSubmit = async () => {
     if (!title || !description || !category || !location) {
@@ -66,6 +90,7 @@ export default function Post() {
           listing_type: actionType,
           price: parseFloat(price),
           price_unit: priceUnit,
+          images,
           location,
           status: 'available',
         });
@@ -80,6 +105,7 @@ export default function Post() {
           request_type: actionType === 'buy' ? 'buy' : 'rent',
           budget: price ? parseFloat(price) : null,
           budget_unit: priceUnit,
+          images,
           location,
           status: 'active',
         });
@@ -91,6 +117,7 @@ export default function Post() {
       setDescription('');
       setPrice('');
       setLocation('');
+      setImages([]);
 
       if (postType === 'listing') {
         router.push('/(tabs)');
@@ -227,6 +254,31 @@ export default function Post() {
         {error ? <Text style={styles.error}>{error}</Text> : null}
 
         <View style={styles.form}>
+          <Text style={styles.label}>Images</Text>
+          <View style={styles.imagesContainer}>
+            {images.map((image, index) => (
+              <View key={index} style={styles.imageWrapper}>
+                <Image source={{ uri: image }} style={styles.imagePreview} />
+                <TouchableOpacity
+                  style={styles.removeButton}
+                  onPress={() => handleRemoveImage(index)}>
+                  <X size={16} color="#fff" />
+                </TouchableOpacity>
+              </View>
+            ))}
+            {images.length < 5 && (
+              <TouchableOpacity
+                style={styles.addImageButton}
+                onPress={handleAddImage}
+                disabled={uploading}>
+                <Plus size={32} color="#007AFF" />
+                <Text style={styles.addImageText}>
+                  {uploading ? 'Uploading...' : `Add Image (${images.length}/5)`}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
           <Text style={styles.label}>
             Title <Text style={styles.required}>*</Text>
           </Text>
@@ -498,6 +550,51 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     marginBottom: 16,
+    textAlign: 'center',
+  },
+  imagesContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    marginBottom: 16,
+  },
+  imageWrapper: {
+    position: 'relative',
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  imagePreview: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    backgroundColor: '#f0f0f0',
+  },
+  removeButton: {
+    position: 'absolute',
+    top: 4,
+    right: 4,
+    backgroundColor: '#ff3b30',
+    borderRadius: 12,
+    width: 24,
+    height: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addImageButton: {
+    width: 100,
+    height: 100,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#007AFF',
+    borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f8ff',
+  },
+  addImageText: {
+    fontSize: 11,
+    color: '#007AFF',
+    marginTop: 4,
     textAlign: 'center',
   },
 });

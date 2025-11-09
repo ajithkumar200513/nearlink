@@ -11,7 +11,7 @@ export default function Index() {
       if (session) {
         router.replace('/(tabs)');
       } else {
-        router.replace('/(auth)/sign-in');
+        router.replace('/(auth)/otp-signin');
       }
     }
   }, [session, loading]);

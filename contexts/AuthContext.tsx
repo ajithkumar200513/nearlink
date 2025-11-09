@@ -6,8 +6,8 @@ interface AuthContextType {
   session: Session | null;
   user: User | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
+  signInWithOTP: (phone: string) => Promise<{ error: any }>;
+  verifyOTP: (phone: string, token: string, fullName?: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -36,28 +36,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.data.subscription.unsubscribe();
   }, []);
 
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
+  const signInWithOTP = async (phone: string) => {
+    const { error } = await supabase.auth.signInWithOtp({
+      phone,
     });
     return { error };
   };
 
-  const signUp = async (email: string, password: string, fullName: string) => {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
+  const verifyOTP = async (phone: string, token: string, fullName?: string) => {
+    const { data, error } = await supabase.auth.verifyOtp({
+      phone,
+      token,
+      type: 'sms',
     });
 
     if (!error && data.user) {
-      const { error: profileError } = await supabase.from('profiles').insert({
-        id: data.user.id,
-        full_name: fullName,
-      });
+      const { data: existingProfile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', data.user.id)
+        .maybeSingle();
 
-      if (profileError) {
-        return { error: profileError };
+      if (!existingProfile) {
+        const { error: profileError } = await supabase.from('profiles').insert({
+          id: data.user.id,
+          full_name: fullName || 'User',
+          phone,
+        });
+
+        if (profileError) {
+          return { error: profileError };
+        }
+      } else {
+        const { error: updateError } = await supabase
+          .from('profiles')
+          .update({ phone })
+          .eq('id', data.user.id);
+
+        if (updateError) {
+          return { error: updateError };
+        }
       }
     }
 
@@ -69,7 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ session, user, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ session, user, loading, signInWithOTP, verifyOTP, signOut }}>
       {children}
     </AuthContext.Provider>
   );
