@@ -93,7 +93,7 @@ export default function Requests() {
         pathname: '/chat/[id]',
         params: { id: conversationId },
       });
-    } catch (error: any) {
+    } catch {
       Alert.alert('Error', 'Could not open chat');
     }
   };
