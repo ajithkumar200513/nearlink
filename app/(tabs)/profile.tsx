@@ -20,7 +20,7 @@ interface UserProfile {
 
 export default function Profile() {
   const { user, signOut } = useAuth();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [editing, setEditing] = useState(false);
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
