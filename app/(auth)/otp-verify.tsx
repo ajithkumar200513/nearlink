@@ -103,7 +103,7 @@ export default function OTPVerify() {
           <TouchableOpacity
             style={styles.resendButton}
             onPress={handleResendOTP}>
-            <Text style={styles.resendText}>Didn't receive code? Resend OTP</Text>
+            <Text style={styles.resendText}>Didn&apos;t receive code? Resend OTP</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
