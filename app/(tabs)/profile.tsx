@@ -12,7 +12,7 @@ import { supabase } from '@/lib/supabase';
 import { router } from 'expo-router';
 import { User, MapPin, Phone, LogOut, Edit2, Save } from 'lucide-react-native';
 
-interface Profile {
+interface UserProfile {
   full_name: string;
   phone: string | null;
   location: string | null;
