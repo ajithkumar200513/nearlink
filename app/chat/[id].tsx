@@ -113,7 +113,14 @@ export default function ChatScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      fetchConversation();
+      fetchMessages();
+    }
+  }, [id, fetchConversation, fetchMessages]);
 
   const handleSendMessage = async () => {
     if (!messageText.trim() || !id) return;
