@@ -54,7 +54,7 @@ export default function ChatScreen() {
     }
   }, [id]);
 
-  const fetchConversation = async () => {
+  const fetchConversation = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('conversations')
