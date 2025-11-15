@@ -151,7 +151,7 @@ export default function Requests() {
       ) : requests.length === 0 ? (
         <View style={styles.centered}>
           <Text style={styles.emptyText}>No requests yet</Text>
-          <Text style={styles.emptySubtext}>Post what you're looking for!</Text>
+          <Text style={styles.emptySubtext}>Post what you&apos;re looking for!</Text>
         </View>
       ) : (
         <FlatList
