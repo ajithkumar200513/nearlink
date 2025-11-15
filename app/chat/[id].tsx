@@ -96,9 +96,9 @@ export default function ChatScreen() {
     } catch (error: any) {
       console.error('Error fetching conversation:', error.message);
     }
-  };
+  }, [id, user]);
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('messages')
