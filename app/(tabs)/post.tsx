@@ -55,7 +55,7 @@ export default function Post() {
         const url = await uploadImage(imageUri, postType);
         setImages((prev) => [...prev, url]);
       }
-    } catch (err: any) {
+    } catch {
       Alert.alert('Error', 'Failed to upload image');
     } finally {
       setUploading(false);
