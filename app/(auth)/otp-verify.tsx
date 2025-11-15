@@ -9,9 +9,8 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams , router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
-import { router } from 'expo-router';
 
 export default function OTPVerify() {
   const { phone } = useLocalSearchParams<{ phone: string }>();

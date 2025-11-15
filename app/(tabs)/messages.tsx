@@ -20,10 +20,10 @@ interface Conversation {
   request_id: string | null;
   last_message_at: string;
   created_at: string;
-  messages: Array<{
+  messages: {
     content: string;
     created_at: string;
-  }>;
+  }[];
   other_participant: {
     full_name: string;
     id: string;
