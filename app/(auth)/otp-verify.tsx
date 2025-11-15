@@ -19,7 +19,7 @@ export default function OTPVerify() {
   const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isNewUser, setIsNewUser] = useState(true);
+  const [isNewUser] = useState(true);
   const { verifyOTP } = useAuth();
 
   const handleVerifyOTP = async () => {
