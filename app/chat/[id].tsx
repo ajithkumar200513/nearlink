@@ -47,13 +47,6 @@ export default function ChatScreen() {
   const { user } = useAuth();
   const flatListRef = useRef<FlatList>(null);
 
-  useEffect(() => {
-    if (id) {
-      fetchConversation();
-      fetchMessages();
-    }
-  }, [id]);
-
   const fetchConversation = useCallback(async () => {
     try {
       const { data, error } = await supabase
