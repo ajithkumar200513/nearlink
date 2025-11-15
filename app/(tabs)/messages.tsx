@@ -111,11 +111,11 @@ export default function Messages() {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchConversations();
-  }, [user]);
+  }, [fetchConversations]);
 
   const onRefresh = () => {
     setRefreshing(true);
