@@ -42,7 +42,7 @@ export default function Messages() {
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuth();
 
-  const fetchConversations = async () => {
+  const fetchConversations = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('conversations')
