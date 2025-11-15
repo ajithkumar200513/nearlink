@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -20,10 +20,10 @@ interface Conversation {
   request_id: string | null;
   last_message_at: string;
   created_at: string;
-  messages: Array<{
+  messages: {
     content: string;
     created_at: string;
-  }>;
+  }[];
   other_participant: {
     full_name: string;
     id: string;
@@ -42,7 +42,7 @@ export default function Messages() {
   const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuth();
 
-  const fetchConversations = async () => {
+  const fetchConversations = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('conversations')
@@ -111,11 +111,11 @@ export default function Messages() {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchConversations();
-  }, [user]);
+  }, [fetchConversations]);
 
   const onRefresh = () => {
     setRefreshing(true);

@@ -9,9 +9,8 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams , router } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
-import { router } from 'expo-router';
 
 export default function OTPVerify() {
   const { phone } = useLocalSearchParams<{ phone: string }>();
@@ -19,7 +18,7 @@ export default function OTPVerify() {
   const [fullName, setFullName] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [isNewUser, setIsNewUser] = useState(true);
+  const [isNewUser] = useState(true);
   const { verifyOTP } = useAuth();
 
   const handleVerifyOTP = async () => {
@@ -103,7 +102,7 @@ export default function OTPVerify() {
           <TouchableOpacity
             style={styles.resendButton}
             onPress={handleResendOTP}>
-            <Text style={styles.resendText}>Didn't receive code? Resend OTP</Text>
+            <Text style={styles.resendText}>Didn&apos;t receive code? Resend OTP</Text>
           </TouchableOpacity>
 
           <TouchableOpacity

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
   Text,
@@ -47,14 +47,7 @@ export default function ChatScreen() {
   const { user } = useAuth();
   const flatListRef = useRef<FlatList>(null);
 
-  useEffect(() => {
-    if (id) {
-      fetchConversation();
-      fetchMessages();
-    }
-  }, [id]);
-
-  const fetchConversation = async () => {
+  const fetchConversation = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('conversations')
@@ -96,9 +89,9 @@ export default function ChatScreen() {
     } catch (error: any) {
       console.error('Error fetching conversation:', error.message);
     }
-  };
+  }, [id, user]);
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('messages')
@@ -113,7 +106,14 @@ export default function ChatScreen() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      fetchConversation();
+      fetchMessages();
+    }
+  }, [id, fetchConversation, fetchMessages]);
 
   const handleSendMessage = async () => {
     if (!messageText.trim() || !id) return;
